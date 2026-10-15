@@ -32,4 +32,4 @@ Abra http://localhost:4173. A pasta `dist/` é gerada pelo build; edite os arqui
 - `references/`: referências e prompts das imagens.
 - `.openai/hosting.json`: configuração do site hospedado, com publicação privada.
 
-As fontes do Google e as imagens de áreas/contato do Cloudinary precisam de conexão à internet.
+As fontes do Google e a imagem de Direito Cível do Cloudinary precisam de conexão à internet. A foto do escritório e a imagem de Direito Criminal ficam em `public/assets/`.

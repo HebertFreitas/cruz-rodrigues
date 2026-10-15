@@ -105,7 +105,9 @@ em { font-style: normal; color: var(--accent); }
 .team-names strong { display: block; font-size: .7rem; font-weight: 500; }
 .team-names span { display: block; margin-top: 8px; font-size: .58rem; color: rgba(238,240,244,.55); }
 
-.contact { position: relative; isolation: isolate; display: flex; align-items: center; min-height: 760px; overflow: hidden; padding: 100px clamp(24px,9vw,150px); background: var(--background) url('https://res.cloudinary.com/dalwymbky/image/upload/v1790172460/escritorio_lqut1r.jpg') 52% center/cover no-repeat; }
+.contact { position: relative; isolation: isolate; display: flex; align-items: center; min-height: 760px; overflow: hidden; padding: 100px clamp(24px,9vw,150px); background: var(--background); }
+.contact-backdrop { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
+.contact-backdrop img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 52% center; }
 .contact::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,var(--background),transparent 18%,transparent 82%,var(--background)),linear-gradient(90deg,#070c16f5 0%,#070c16d6 34%,#070c1661 64%,#070c1614); }
 .contact-content { width: min(100%,650px); }
 .contact h2 { font-size: clamp(3.5rem,5.6vw,5.8rem); line-height: .88; letter-spacing: -.055em; }
@@ -162,23 +164,33 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .about-portrait { left: 3%; width: 49%; height: 80%; }
   .about-content { width: 46%; margin-left: auto; }
   .about h2 { font-size: 4.4rem; }
-  .contact { min-height: 700px; background-position: 58% center; }
+  .contact { min-height: 700px; }
+  .contact-backdrop img { object-position: 58% center; }
   .contact-content { width: min(70%,590px); }
   .footer-main { grid-template-columns: 1fr auto; }
   .footer-main nav { grid-row: 2; grid-column: 1/-1; justify-content: flex-start; }
 }
 @media (max-width: 700px) {
-  .hero { min-height: 600px; }
-  .hero-brand { top: 20px; left: 20px; }
-  .hero-brand .brand-symbol { width: 40px; }
-  .hero-eyebrow { top: 12%; width: calc(100% - 36px); font-size: .5rem; letter-spacing: .18em; }
-  .signature { top: 21%; font-size: clamp(5.2rem,24vw,10rem); line-height: .76; }
-  .hero .hero-title { top: 19%; width: calc(100% - 24px); font-size: clamp(2.8rem,10vw,4.75rem); line-height: .93; }
+  .hero {
+    display: grid;
+    grid-template-areas: 'brand' 'eyebrow' 'title' 'portrait' 'credit';
+    grid-template-columns: minmax(0,1fr);
+    height: auto;
+    min-height: 0;
+    padding: 24px 20px 0;
+  }
+  .hero-brand { position: relative; grid-area: brand; justify-self: center; top: auto; left: auto; gap: 10px; }
+  .hero-brand .brand-symbol { width: 44px; }
+  .hero-brand .brand-wordmark { display: block; font-size: 1.3rem; }
+  .hero-brand .brand-wordmark small { font-size: .38rem; }
+  .hero-eyebrow { position: relative; grid-area: eyebrow; top: auto; left: auto; width: 100%; max-width: 100%; margin: 28px 0 22px; transform: none; font-size: .53rem; line-height: 1.8; letter-spacing: .18em; }
+  .signature { top: 20%; font-size: clamp(4.7rem,22vw,9rem); line-height: .76; color: rgba(214,212,213,.055); }
+  .hero .hero-title { position: relative; grid-area: title; align-self: start; top: auto; left: auto; width: 100%; padding-bottom: .16em; transform: none; font-size: clamp(2.35rem,10.3vw,4.5rem); line-height: .94; }
   .hero-title span { white-space: normal; }
-  .hero-portrait { width: 100%; height: 50%; bottom: 6%; }
-  .hero::after { height: 20%; }
-  .hero-bottom { bottom: 4%; }
-  .hero-bottom > p { font-size: .48rem; letter-spacing: .13em; }
+  .hero-portrait { position: relative; grid-area: portrait; justify-self: center; width: min(138%,760px); max-width: none; height: auto; margin-top: 24px; bottom: auto; left: auto; transform: none; }
+  .hero::after { height: 130px; }
+  .hero-bottom { position: relative; grid-area: credit; bottom: auto; left: auto; width: 100%; margin-top: -12px; padding: 24px 0 28px; }
+  .hero-bottom > p { font-size: .48rem; line-height: 1.9; letter-spacing: .1em; }
   .hero-bottom b { margin: 0 4px; }
   .practice { padding: 30px 0 80px; }
   .section-label { top: 15px; width: calc(100% - 28px); font-size: .56rem; letter-spacing: .14em; }
@@ -197,22 +209,27 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .card-details p { font-size: .68rem; }
   .chips span { padding: 5px 10px; font-size: .57rem; }
   .text-link { margin-top: 16px; font-size: .58rem; }
-  .about { display: flex; flex-direction: column-reverse; min-height: 0; padding: 70px 24px 0; }
-  .about-background { top: 8%; left: -5%; font-size: clamp(7.5rem,32vw,11rem); }
+  .about { display: flex; flex-direction: column-reverse; min-height: 0; padding: 60px 22px 0; }
+  .about-background { top: 40px; left: 12px; font-size: clamp(5rem,25vw,8rem); color: rgba(214,212,213,.045); }
   .about-content { width: min(100%,390px); margin: 0 auto; }
-  .about h2 { font-size: 3.65rem; }
-  .about-content > p:not(.eyebrow) { font-size: .72rem; line-height: 1.65; }
-  .about-portrait { position: relative; bottom: auto; left: auto; width: min(100%,480px); height: auto; margin: 35px auto 0; }
+  .about h2 { font-size: clamp(3rem,13vw,4.3rem); line-height: .9; margin-bottom: 24px; }
+  .about-content > p:not(.eyebrow) { font-size: .8125rem; line-height: 1.75; }
+  .about-portrait { position: relative; bottom: auto; left: auto; width: min(94%,360px); height: auto; margin: 28px auto 0; }
   .about-portrait img { height: auto; }
   .eyebrow { font-size: .57rem; letter-spacing: .2em; }
   .team-names strong { font-size: .66rem; }
-  .contact { min-height: 780px; padding: 74px 24px; background-position: 64% center; }
-  .contact::before { background: linear-gradient(180deg,var(--background),#070c16b3 18%,#070c16c7 70%,var(--background)),linear-gradient(90deg,#070c16eb,#070c1661); }
-  .contact-content { width: min(100%,500px); }
-  .contact h2 { font-size: 3.5rem; }
-  .contact-lead { font-size: .72rem; }
-  address { grid-template-columns: 1fr; gap: 18px; }
-  address a { font-size: .7rem; }
+  .contact { display: block; min-height: 0; padding: 64px 22px 72px; }
+  .contact-backdrop img { object-position: 88% center; }
+  .contact::before { background: linear-gradient(180deg,var(--background) 0%,rgba(7,12,22,.42) 10%,rgba(7,12,22,.28) 65%,rgba(7,12,22,.65) 92%,var(--background) 100%),linear-gradient(90deg,rgba(7,12,22,.65),rgba(7,12,22,.18)); }
+  .contact-content { width: min(100%,500px); margin: 0 auto; text-shadow: 0 2px 12px rgba(0,0,0,.65); }
+  .contact h2 { font-size: clamp(2.7rem,11.5vw,4rem); line-height: .94; }
+  .contact-lead { margin: 22px 0 30px; font-size: .8125rem; line-height: 1.75; color: rgba(238,240,244,.88); }
+  address { grid-template-columns: 1fr; gap: 0; margin-bottom: 28px; }
+  address > div { padding: 16px 0; border-top-color: rgba(214,212,213,.42); }
+  .detail-label { font-size: .56rem; line-height: 1.5; letter-spacing: .12em; }
+  address a { font-size: .8rem; color: var(--text); }
+  .contact .button { width: 100%; min-height: 50px; justify-content: space-between; background: rgba(7,12,22,.52); font-size: .6rem; letter-spacing: .12em; }
+  .contact .button:hover { background: var(--accent); }
   .footer-main { display: flex; flex-direction: column; align-items: flex-start; gap: 30px; padding-bottom: 32px; }
   .footer-brand .brand-symbol { width: 56px; }
   .footer-brand .brand-wordmark { font-size: 1.5rem; }
@@ -221,7 +238,7 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   dialog { padding: 40px 25px; }
   dialog h2 { font-size: 2.7rem; }
 }
-@media (max-width: 380px) { .hero .hero-title { font-size: 2.65rem; } .hero-eyebrow { font-size: .43rem; } .contact h2 { font-size: 3rem; } }
+@media (max-width: 380px) { .hero-eyebrow { font-size: .47rem; } .hero-brand .brand-wordmark { font-size: 1.2rem; } .hero-bottom > p { font-size: .44rem; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .hero-title-scroll { display: none; }
