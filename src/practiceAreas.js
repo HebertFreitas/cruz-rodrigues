@@ -1,8 +1,9 @@
 export const practiceAreas = [
   {
     "id": "criminal",
-    "image": "https://res.cloudinary.com/dalwymbky/image/upload/v1790172460/tributario_oqoq6r.jpg",
-    "imageAlt": "Estátuas clássicas da Justiça em frente a um tribunal",
+    "image": "/assets/penal.jpg",
+    "imageFit": "contain",
+    "imageAlt": "Estátua da Justiça com balança, martelo e livro jurídico",
     "title": "Direito Criminal",
     "description": "Defesa técnica e acompanhamento próximo para quem precisa de orientação na esfera criminal. Atenção aos detalhes e compromisso com os seus direitos em cada etapa.",
     "chips": [
