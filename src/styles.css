@@ -186,7 +186,7 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .hero-brand .brand-wordmark { display: block; font-size: 1.3rem; }
   .hero-brand .brand-wordmark small { font-size: .38rem; }
   .hero-eyebrow { position: relative; grid-area: eyebrow; top: auto; left: auto; width: 100%; max-width: 100%; margin: 28px 0 22px; transform: none; font-size: .53rem; line-height: 1.8; letter-spacing: .18em; }
-  .signature { top: 20%; font-size: clamp(4.7rem,22vw,9rem); line-height: .76; color: rgba(214,212,213,.055); }
+  .signature { top: 20%; width: calc(100% - 32px); font-size: clamp(2.5rem,14vw,6.125rem); line-height: .8; text-align: center; color: rgba(214,212,213,.055); }
   .hero .hero-title { position: relative; grid-area: title; align-self: start; top: auto; left: auto; width: 100%; padding-bottom: .16em; transform: none; font-size: clamp(2.35rem,10.3vw,4.5rem); line-height: .94; }
   .hero-title span { white-space: normal; }
   .hero-portrait { position: relative; grid-area: portrait; justify-self: center; width: min(138%,760px); max-width: none; height: auto; margin-top: 24px; bottom: auto; left: auto; transform: none; }
@@ -212,7 +212,7 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .chips span { padding: 5px 10px; font-size: .57rem; }
   .text-link { margin-top: 16px; font-size: .58rem; }
   .about { display: flex; flex-direction: column-reverse; min-height: 0; padding: 60px 22px 0; }
-  .about-background { top: 40px; left: 12px; font-size: clamp(5rem,25vw,8rem); color: rgba(214,212,213,.045); }
+  .about-background { top: 40px; left: 50%; width: calc(100% - 32px); transform: translateX(-50%); font-size: clamp(2.5rem,14vw,6.125rem); line-height: .8; letter-spacing: -.075em; text-align: center; color: rgba(214,212,213,.045); }
   .about-content { width: min(100%,390px); margin: 0 auto; }
   .about h2 { font-size: clamp(3rem,13vw,4.3rem); line-height: .9; margin-bottom: 24px; }
   .about-content > p:not(.eyebrow) { font-size: .8125rem; line-height: 1.75; }
