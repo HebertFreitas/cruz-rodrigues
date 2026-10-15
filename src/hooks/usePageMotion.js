@@ -25,9 +25,9 @@ export default function usePageMotion() {
         const raw = Math.min(1, Math.max(0, (viewport - card.getBoundingClientRect().top) / (viewport - stickyTop)));
         const progress = 1 - Math.pow(1 - raw, 2.5);
         const mobile = window.innerWidth <= 767;
-        const rotate = (1 - progress) * (mobile ? 55 : 80);
-        const translate = (1 - progress) * (mobile ? 35 : 60);
-        const scale = 1 + (1 - progress) * (mobile ? 0.05 : 0.08);
+        const rotate = (1 - progress) * (mobile ? 30 : 80);
+        const translate = (1 - progress) * (mobile ? 24 : 60);
+        const scale = 1 + (1 - progress) * (mobile ? 0.03 : 0.08);
         surface.style.transform = raw >= 1
           ? 'translate3d(0, 0, 0) rotateX(0deg) scale(1)'
           : `translate3d(0, ${translate}px, 0) rotateX(${rotate}deg) scale(${scale})`;
@@ -49,7 +49,7 @@ export default function usePageMotion() {
           orientation: 'vertical',
           gestureOrientation: 'vertical',
           smoothWheel: true,
-          syncTouch: true,
+          syncTouch: false,
           touchMultiplier: 1.2,
           infinite: false,
         });
@@ -81,7 +81,10 @@ export default function usePageMotion() {
       document.body.classList.add('js-motion');
       document.querySelectorAll('.reveal-section').forEach(section => {
         const observer = new IntersectionObserver(entries => {
-          entries.forEach(entry => section.classList.toggle('is-visible', entry.isIntersecting));
+          entries.forEach(entry => {
+            section.classList.toggle('is-visible', entry.isIntersecting);
+            if (section.id === 'contato') document.body.classList.toggle('contact-in-view', entry.isIntersecting);
+          });
         }, { threshold: section.classList.contains('about') && window.innerWidth <= 700 ? 0.05 : 0.2 });
         observer.observe(section);
         observers.push(observer);
@@ -99,7 +102,7 @@ export default function usePageMotion() {
       lenis?.destroy();
       smoothScrollRef.current = null;
       observers.forEach(observer => observer.disconnect());
-      document.body.classList.remove('js-motion');
+      document.body.classList.remove('js-motion', 'contact-in-view');
       window.removeEventListener('scroll', scheduleUpdate);
       window.removeEventListener('resize', scheduleUpdate);
       document.removeEventListener('click', onAnchorClick);

@@ -8,6 +8,8 @@ export default function useCursorReveal(heroRef, titleRef, scrollTitleRef, smoot
     const revealTargets = [title];
     const probe = document.createElement('canvas');
     if (!probe.getContext('2d') || !window.CSS?.supports('mask-image', 'linear-gradient(black, black)')) return;
+    // Touch-only devices get the plain title and native scrolling: the reveal gate needs a mouse.
+    if (!window.matchMedia('(pointer: fine)').matches) return;
     const smoothScroll = {
       stop: () => smoothScrollRef.current?.stop(),
       start: () => smoothScrollRef.current?.start(),

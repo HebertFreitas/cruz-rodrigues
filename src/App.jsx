@@ -21,6 +21,9 @@ export default function App() {
         <Contact onOpenContact={() => dialogRef.current?.showModal()} />
       </main>
       <Footer />
+      <button className="mobile-cta" type="button" onClick={() => dialogRef.current?.showModal()}>
+        Fale com um advogado <span aria-hidden="true">↗</span>
+      </button>
       <ContactDialog dialogRef={dialogRef} />
     </>
   );

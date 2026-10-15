@@ -3,10 +3,12 @@
   --navy: #141f35;
   --background: #070c16;
   --surface: #111b2d;
-  --accent: #d6d4d5;
+  --accent: #c9a66b;
+  --accent-light: #e6cf9f;
+  --accent-gradient: linear-gradient(100deg,#e9d4a6 0%,#c9a66b 45%,#a8834a 100%);
   --silver: #d6d4d5;
-  --text: #eef0f4;
-  --muted: rgba(238,240,244,.72);
+  --text: #f2f4f8;
+  --muted: #94a0b8;
   --ease: cubic-bezier(.16,1,.3,1);
 }
 * { box-sizing: border-box; }
@@ -245,4 +247,72 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .hero .hero-title { -webkit-mask-image: none !important; mask-image: none !important; }
   .js-motion .reveal-content > *, .js-motion .about-portrait { opacity: 1; transform: none; }
   .card-surface { will-change: auto; }
+}
+
+/* Mobile UX: readable type, native-feeling flow, comfortable tap targets and a persistent CTA. */
+.mobile-cta { display: none; }
+@media (max-width: 700px) {
+  .hero-eyebrow { font-size: .68rem; letter-spacing: .16em; }
+  .hero-bottom > p { font-size: .62rem; letter-spacing: .12em; }
+  .hero-brand .brand-wordmark small { font-size: .5rem; }
+  .section-label { font-size: .68rem; }
+  .cards { padding-bottom: 120px; }
+  .card-image { aspect-ratio: 16/8; }
+  .card-number { font-size: .62rem; }
+  .card-body h2 { font-size: 2.1rem; }
+  .card-details p { font-size: .9rem; line-height: 1.6; }
+  .chips span { padding: 7px 12px; font-size: .72rem; }
+  .text-link { min-height: 48px; margin-top: 14px; font-size: .8rem; }
+  .about-content > p:not(.eyebrow), .contact-lead { font-size: .95rem; }
+  .eyebrow { font-size: .68rem; }
+  .team-names strong { font-size: .85rem; }
+  .team-names span { font-size: .72rem; }
+  .detail-label { font-size: .68rem; }
+  address a { display: inline-flex; align-items: center; min-height: 44px; font-size: 1rem; }
+  .contact .button { min-height: 54px; font-size: .75rem; }
+  .footer-main nav a, .back-top { display: inline-flex; align-items: center; min-height: 44px; font-size: .8rem; }
+  .legal { font-size: .68rem; }
+  footer { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  dialog > p:not(.eyebrow) { font-size: .9rem; }
+  .contact-choice { min-height: 64px; }
+  .contact-choice strong { font-size: 1rem; }
+  .contact-choice small { font-size: .78rem; }
+  .dialog-close { width: 44px; height: 44px; }
+  .mobile-cta { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); left: 16px; z-index: 900; display: flex; align-items: center; justify-content: space-between; min-height: 54px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--accent); color: var(--navy); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 12px 30px #0008; cursor: pointer; }
+  .mobile-cta span { font-size: 1.1rem; }
+}
+@media (max-width: 380px) { .hero-eyebrow { font-size: .62rem; } .hero-bottom > p { font-size: .58rem; } }
+
+/* Color hierarchy: white headlines, blue-grey copy, champagne accent for emphasis. */
+em, .hero-title span { background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; font-style: italic; padding-right: .06em; }
+.hero .hero-title { color: var(--text); }
+.hero-eyebrow, .hero-bottom > p { color: var(--muted); }
+.hero-bottom b, .eyebrow, .detail-label, .card-body h2 span, .text-link span, .button > span, .contact-choice > span:last-child, .dialog-close { color: var(--accent); }
+.signature, .about-background { color: rgba(201,166,107,.06); }
+.card-number { border-color: rgba(201,166,107,.45); color: var(--accent-light); }
+.chips span { border: 1px solid rgba(201,166,107,.35); background: rgba(201,166,107,.1); color: var(--accent-light); }
+.chips span:hover { background: rgba(201,166,107,.2); }
+.card-body h2 a:hover, address a:hover, .footer-main a:hover, .contact-choice:hover strong { color: var(--accent-light); }
+.text-link { color: var(--text); border-top-color: rgba(201,166,107,.25); }
+.about-content > .brand-line { color: var(--accent-light) !important; }
+.team-names, address > div, .contact-choice { border-top-color: rgba(201,166,107,.3); }
+.team-names span { color: var(--accent); }
+.button { border-color: var(--accent); }
+.button:hover { background: var(--accent-gradient); color: var(--navy); }
+.section-label { color: var(--muted); }
+.marquee { -webkit-text-stroke-color: rgba(201,166,107,.55); }
+.mobile-cta { background: var(--accent-gradient); color: #0b1322; }
+::selection { background: var(--accent); color: var(--navy); }
+.brand { color: var(--text); }
+
+/* Mobile contact: the photo stays the backdrop but is anchored to the bottom at a ratio that shows the lamp and desk. */
+@media (max-width: 700px) {
+  .contact { padding-bottom: 78vw; }
+  .contact-backdrop { top: auto; height: 110vw; }
+  .contact-backdrop img { object-position: 88% center; }
+  .contact::before { background: linear-gradient(180deg,var(--background) 0%,var(--background) calc(100% - 110vw),rgba(7,12,22,.55) calc(100% - 78vw),rgba(7,12,22,.12) calc(100% - 40vw),rgba(7,12,22,.35) 92%,var(--background) 100%); }
+  address { grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .contact .button { background: rgba(7,12,22,.6); backdrop-filter: blur(6px); }
+  body.contact-in-view .mobile-cta { opacity: 0; pointer-events: none; transform: translateY(20px); }
+  .mobile-cta { transition: opacity .3s ease,transform .3s ease; }
 }
