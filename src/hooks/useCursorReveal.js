@@ -1,123 +1,229 @@
 import { useEffect } from 'react';
 
-// A soft canvas brush becomes an accumulating alpha mask over the real HTML title.
-// The title stays semantic and selectable; only its visual paint is masked.
-export default function useCursorReveal(heroRef, titleRef) {
+// Ported from Advogado Premium.zip: cursor spotlight + reveal before scrolling.
+export default function useCursorReveal(heroRef, titleRef, scrollTitleRef, smoothScrollRef) {
   useEffect(() => {
     const hero = heroRef.current;
     const title = titleRef.current;
-    const enabled = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    if (!context || !window.CSS?.supports('mask-image', 'linear-gradient(black, black)')) return;
-
+    const revealTargets = [title];
+    const probe = document.createElement('canvas');
+    if (!probe.getContext('2d') || !window.CSS?.supports('mask-image', 'linear-gradient(black, black)')) return;
+    const smoothScroll = {
+      stop: () => smoothScrollRef.current?.stop(),
+      start: () => smoothScrollRef.current?.start(),
+      scrollTo: (...args) => smoothScrollRef.current?.scrollTo(...args),
+    };
     let disposed = false;
-    let active = false;
-    let previous = null;
-    let pending = null;
-    let frame = 0;
-    let lastPaint = 0;
+    const cleanups = [];
+    const listen = (target, name, handler, options) => {
+      target.addEventListener(name, handler, options);
+      cleanups.push(() => target.removeEventListener(name, handler, options));
+    };
+    const isEditable = target => target instanceof Element && Boolean(target.closest('input, textarea, select, button, [contenteditable="true"]'));
 
-    const publishMask = () => {
-      title.style.setProperty('--title-reveal-mask', `url("${canvas.toDataURL()}")`);
-    };
-    const resize = () => {
-      if (!active) return;
-      const bounds = title.getBoundingClientRect();
-      const width = Math.max(1, Math.ceil(bounds.width));
-      const height = Math.max(1, Math.ceil(bounds.height));
-      if (canvas.width !== width || canvas.height !== height) {
-        // Preserve revealed regions when fonts load or the desktop viewport resizes.
-        const snapshot = document.createElement('canvas');
-        snapshot.width = canvas.width;
-        snapshot.height = canvas.height;
-        snapshot.getContext('2d').drawImage(canvas, 0, 0);
-        canvas.width = width;
-        canvas.height = height;
-        context.drawImage(snapshot, 0, 0, width, height);
-        previous = null;
-        publishMask();
-      }
-    };
-    const stamp = (x, y, radius) => {
-      const brush = context.createRadialGradient(x, y, 0, x, y, radius);
-      brush.addColorStop(0, 'rgba(0,0,0,1)');
-      brush.addColorStop(0.55, 'rgba(0,0,0,1)');
-      brush.addColorStop(1, 'rgba(0,0,0,0)');
-      context.fillStyle = brush;
-      context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-    };
-    const paint = time => {
-      frame = 0;
-      if (!active || !pending) return;
-      // Encoding the mask is limited to 30 fps; React never rerenders on mousemove.
-      if (time - lastPaint < 32) {
-        frame = requestAnimationFrame(paint);
-        return;
-      }
-      lastPaint = time;
-      const bounds = title.getBoundingClientRect();
-      const point = { x: pending.x - bounds.left, y: pending.y - bounds.top };
-      const radius = Math.max(85, Math.min(150, bounds.width * 0.15));
-      const start = previous || point;
-      const distance = Math.hypot(point.x - start.x, point.y - start.y);
-      const steps = Math.max(1, Math.ceil(distance / (radius * 0.2)));
-      for (let step = 0; step <= steps; step++) {
-        const t = step / steps;
-        const x = start.x + (point.x - start.x) * t;
-        const y = start.y + (point.y - start.y) * t;
-        if (x + radius >= 0 && x - radius <= bounds.width && y + radius >= 0 && y - radius <= bounds.height) stamp(x, y, radius);
-      }
-      previous = point;
-      pending = null;
-      if (point.x + radius >= 0 && point.x - radius <= bounds.width && point.y + radius >= 0 && point.y - radius <= bounds.height || distance > radius) publishMask();
-    };
-    const onPointerMove = event => {
-      if (!active || event.pointerType !== 'mouse') return;
-      pending = { x: event.clientX, y: event.clientY };
-      if (!frame) frame = requestAnimationFrame(paint);
-    };
-    const onPointerLeave = () => {
-      // Already uncovered text stays visible. A new entry starts a new stroke.
-      previous = null;
-      pending = null;
-      cancelAnimationFrame(frame);
-      frame = 0;
-    };
-    const configure = () => {
-      if (disposed) return;
-      onPointerLeave();
-      active = enabled.matches;
-      title.classList.remove('is-reveal-ready');
-      if (active) {
-        resize();
-        publishMask();
-        title.classList.add('is-reveal-ready');
-      } else {
-        title.style.removeProperty('--title-reveal-mask');
-      }
-    };
+  const masks = revealTargets.map(() => document.createElement("canvas"));
+  const contexts = masks.map((mask) => mask.getContext("2d"));
+  const targetCursor = { x: 0, y: 0 };
+  const cursor = { x: 0, y: 0 };
+  let frameId = 0;
+  let hovering = false;
+  let scrollProgress = 0;
+  let scrollLocked = false;
+  let scrollUnlockTimer = 0;
+  let scrollReadyAt = 0;
+  let lastTouchY = null;
+  const finePointer = window.matchMedia("(pointer: fine)").matches;
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    const observer = new ResizeObserver(resize);
-    observer.observe(title);
-    hero.addEventListener('pointermove', onPointerMove, { passive: true });
-    hero.addEventListener('pointerleave', onPointerLeave);
-    // Scroll changes the title's screen position, so do not join unrelated strokes.
-    window.addEventListener('scroll', onPointerLeave, { passive: true });
-    enabled.addEventListener('change', configure);
-    // Wait for the display font before measuring and concealing the title.
-    (document.fonts?.ready || Promise.resolve()).then(configure);
+  const resizeMasks = () => revealTargets.forEach((target, index) => {
+    const bounds = target.getBoundingClientRect();
+    masks[index].width = Math.ceil(bounds.width);
+    masks[index].height = Math.ceil(bounds.height);
+  });
 
-    return () => {
-      disposed = true;
-      onPointerLeave();
-      observer.disconnect();
-      hero.removeEventListener('pointermove', onPointerMove);
-      hero.removeEventListener('pointerleave', onPointerLeave);
-      window.removeEventListener('scroll', onPointerLeave);
-      enabled.removeEventListener('change', configure);
-      title.classList.remove('is-reveal-ready');
-      title.style.removeProperty('--title-reveal-mask');
-    };
-  }, [heroRef, titleRef]);
+  const setMask = (target, mask) => {
+    const image = `url("${mask.toDataURL("image/png")}")`;
+    target.style.webkitMaskImage = image;
+    target.style.maskImage = image;
+    target.style.webkitMaskSize = "100% 100%";
+    target.style.maskSize = "100% 100%";
+  };
+
+  const clearReveal = () => {
+    hovering = false;
+    cancelAnimationFrame(frameId);
+    frameId = 0;
+    revealTargets.forEach((target, index) => {
+      contexts[index].clearRect(0, 0, masks[index].width, masks[index].height);
+      setMask(target, masks[index]);
+    });
+  };
+
+  const drawReveal = () => revealTargets.forEach((target, index) => {
+    const bounds = target.getBoundingClientRect();
+    const x = cursor.x - bounds.left;
+    const y = cursor.y - bounds.top;
+    const radius = Math.max(190, Math.min(260, bounds.width * 0.25));
+    const context = contexts[index];
+    const mask = masks[index];
+    const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.4, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.6, "rgba(255, 255, 255, 0.75)");
+    gradient.addColorStop(0.75, "rgba(255, 255, 255, 0.4)");
+    gradient.addColorStop(0.88, "rgba(255, 255, 255, 0.12)");
+    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+    context.clearRect(0, 0, mask.width, mask.height);
+    context.fillStyle = gradient;
+    context.beginPath();
+    context.arc(x, y, radius, 0, Math.PI * 2);
+    context.fill();
+    setMask(target, mask);
+  });
+
+  const animate = () => {
+    if (!hovering) return;
+    const easing = motionPreference.matches ? 1 : 0.18;
+    cursor.x += (targetCursor.x - cursor.x) * easing;
+    cursor.y += (targetCursor.y - cursor.y) * easing;
+    drawReveal();
+    frameId = Math.hypot(targetCursor.x - cursor.x, targetCursor.y - cursor.y) > 0.5 ? requestAnimationFrame(animate) : 0;
+  };
+
+  const updatePointer = (event) => {
+    if (motionPreference.matches || scrollProgress > 0 || !finePointer || event.pointerType !== "mouse") return;
+    targetCursor.x = event.clientX;
+    targetCursor.y = event.clientY;
+    if (!hovering) { cursor.x = targetCursor.x; cursor.y = targetCursor.y; hovering = true; }
+    if (!frameId) frameId = requestAnimationFrame(animate);
+  };
+
+  const setScrollReveal = (visible) => {
+    const nextProgress = visible ? 1 : 0;
+    if (nextProgress === scrollProgress) return;
+    if (visible) clearReveal();
+    hero.classList.toggle("has-scroll-reveal", visible);
+    scrollProgress = nextProgress;
+
+  };
+
+  const keepScrollLocked = () => {
+    clearTimeout(scrollUnlockTimer);
+    const remaining = Math.max(160, scrollReadyAt - performance.now());
+    scrollUnlockTimer = window.setTimeout(() => {
+      scrollLocked = false;
+      if (smoothScroll) smoothScroll.start();
+    }, remaining);
+  };
+
+  const revealBeforeScroll = () => {
+    if (smoothScroll) {
+      smoothScroll.stop();
+      smoothScroll.scrollTo(0, { immediate: true, force: true });
+    }
+    setScrollReveal(true);
+    scrollLocked = true;
+    scrollReadyAt = performance.now() + 720;
+    keepScrollLocked();
+  };
+
+  const hideAtTop = () => {
+    if (smoothScroll) {
+      smoothScroll.stop();
+      smoothScroll.scrollTo(0, { immediate: true, force: true });
+    }
+    setScrollReveal(false);
+    scrollLocked = true;
+    scrollReadyAt = performance.now() + 720;
+    keepScrollLocked();
+  };
+
+  const configureMotion = () => {
+    clearTimeout(scrollUnlockTimer);
+    scrollLocked = false;
+    smoothScroll.start();
+    resizeMasks();
+    clearReveal();
+    title.classList.toggle('is-reveal-ready', !motionPreference.matches);
+    setScrollReveal(motionPreference.matches || window.scrollY > 2);
+  };
+  configureMotion();
+  listen(motionPreference, 'change', configureMotion);
+  listen(hero, "pointerenter", updatePointer);
+  listen(hero, "pointermove", updatePointer, { passive: true });
+  listen(hero, "pointerleave", clearReveal);
+  listen(window, "wheel", (event) => {
+    if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+    if (motionPreference.matches || document.querySelector("dialog[open]") || isEditable(event.target)) return;
+    const atTop = window.scrollY <= 2;
+    if (scrollLocked) {
+      event.preventDefault();
+      keepScrollLocked();
+      return;
+    }
+    if (atTop && event.deltaY > 0 && scrollProgress < 1) {
+      event.preventDefault();
+      revealBeforeScroll();
+    } else if (atTop && event.deltaY < 0 && scrollProgress > 0) {
+      event.preventDefault();
+      hideAtTop();
+    }
+  }, { passive: false, capture: true });
+  listen(window, "touchstart", (event) => { lastTouchY = event.touches[0]?.clientY ?? null; }, { passive: true });
+  listen(window, "touchmove", (event) => {
+    if (event.touches.length !== 1) return;
+    const currentY = event.touches[0]?.clientY;
+    if (lastTouchY === null || currentY === undefined) return;
+    const delta = lastTouchY - currentY;
+    if (motionPreference.matches || document.querySelector("dialog[open]") || isEditable(event.target)) return;
+    const atTop = window.scrollY <= 2;
+    if (scrollLocked) {
+      event.preventDefault();
+      keepScrollLocked();
+    } else if (atTop && delta > 0 && scrollProgress < 1) {
+      event.preventDefault();
+      revealBeforeScroll();
+    } else if (atTop && delta < 0 && scrollProgress > 0) {
+      event.preventDefault();
+      hideAtTop();
+    }
+    lastTouchY = currentY;
+  }, { passive: false, capture: true });
+  listen(window, "touchend", () => { lastTouchY = null; }, { passive: true });
+  listen(window, "keydown", (event) => {
+    if (motionPreference.matches || document.querySelector("dialog[open]") || isEditable(event.target)) return;
+    const atTop = window.scrollY <= 2;
+    if (scrollLocked) {
+      if (["ArrowDown", "PageDown", " ", "ArrowUp", "PageUp"].includes(event.key)) event.preventDefault();
+      return;
+    }
+    if (atTop && ["ArrowDown", "PageDown", " "].includes(event.key) && scrollProgress < 1) {
+      event.preventDefault();
+      revealBeforeScroll();
+    } else if (atTop && ["ArrowUp", "PageUp"].includes(event.key) && scrollProgress > 0) {
+      event.preventDefault();
+      hideAtTop();
+    }
+  });
+  listen(window, "resize", () => { resizeMasks(); if (!hovering) clearReveal(); }, { passive: true });
+  listen(window, 'touchcancel', () => { lastTouchY = null; }, { passive: true });
+  listen(window, 'scroll', () => {
+    if (window.scrollY > 2 && !scrollProgress) setScrollReveal(true);
+  }, { passive: true });
+  const observer = new ResizeObserver(() => { resizeMasks(); if (hovering) drawReveal(); else clearReveal(); });
+  observer.observe(title);
+  document.fonts?.ready.then(() => { if (!disposed) { resizeMasks(); if (hovering) drawReveal(); else clearReveal(); } });
+  return () => {
+    disposed = true;
+    cancelAnimationFrame(frameId);
+    clearTimeout(scrollUnlockTimer);
+    observer.disconnect();
+    cleanups.forEach(cleanup => cleanup());
+    title.classList.remove('is-reveal-ready');
+    hero.classList.remove('has-scroll-reveal');
+    title.style.removeProperty('mask-image');
+    title.style.removeProperty('-webkit-mask-image');
+    smoothScroll.start();
+  };
+  }, [heroRef, titleRef, scrollTitleRef, smoothScrollRef]);
 }

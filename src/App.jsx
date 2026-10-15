@@ -9,13 +9,13 @@ import usePageMotion from './hooks/usePageMotion';
 
 export default function App() {
   const dialogRef = useRef(null);
-  usePageMotion();
+  const smoothScrollRef = usePageMotion();
 
   return (
     <>
       <a className="skip-link" href="#areas-de-atuacao">Ir para o conteúdo</a>
       <main id="top">
-        <Hero />
+        <Hero smoothScrollRef={smoothScrollRef} />
         <PracticeAreas />
         <About />
         <Contact onOpenContact={() => dialogRef.current?.showModal()} />

@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 
 export default function usePageMotion() {
+  const smoothScrollRef = useRef(null);
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const cards = [...document.querySelectorAll('.practice-card')];
@@ -14,7 +15,7 @@ export default function usePageMotion() {
       cardFrame = 0;
       const viewport = window.innerHeight;
       const stickyTop = window.innerWidth <= 767 ? 60 : window.innerWidth <= 991 ? 80 : 100;
-      cards.forEach((card, index) => {
+      cards.forEach(card => {
         const surface = card.querySelector('.card-surface');
         if (reducedMotion.matches) {
           surface.style.transform = '';
@@ -23,10 +24,14 @@ export default function usePageMotion() {
         }
         const raw = Math.min(1, Math.max(0, (viewport - card.getBoundingClientRect().top) / (viewport - stickyTop)));
         const progress = 1 - Math.pow(1 - raw, 2.5);
-        const next = cards[index + 1];
-        const covered = next ? Math.min(1, Math.max(0, (viewport * 0.65 - next.getBoundingClientRect().top) / (viewport * 0.65 - stickyTop))) : 0;
-        surface.style.transform = `translate3d(0,${(1 - progress) * 50}px,0) rotateX(${(1 - progress) * 8}deg) scale(${1 - (1 - progress) * 0.04 - covered * 0.035})`;
-        surface.style.opacity = String(0.5 + progress * 0.5 - covered * 0.12);
+        const mobile = window.innerWidth <= 767;
+        const rotate = (1 - progress) * (mobile ? 55 : 80);
+        const translate = (1 - progress) * (mobile ? 35 : 60);
+        const scale = 1 + (1 - progress) * (mobile ? 0.05 : 0.08);
+        surface.style.transform = raw >= 1
+          ? 'translate3d(0, 0, 0) rotateX(0deg) scale(1)'
+          : `translate3d(0, ${translate}px, 0) rotateX(${rotate}deg) scale(${scale})`;
+        surface.style.opacity = String(0.4 + progress * 0.6);
       });
     };
     const scheduleUpdate = () => {
@@ -36,8 +41,20 @@ export default function usePageMotion() {
       cancelAnimationFrame(animationFrame);
       lenis?.destroy();
       lenis = undefined;
+      smoothScrollRef.current = null;
       if (!reducedMotion.matches) {
-        lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+        lenis = new Lenis({
+          duration: 1.1,
+          easing: time => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
+          orientation: 'vertical',
+          gestureOrientation: 'vertical',
+          smoothWheel: true,
+          syncTouch: true,
+          touchMultiplier: 1.2,
+          infinite: false,
+        });
+        smoothScrollRef.current = lenis;
+        lenis.on('scroll', scheduleUpdate);
         const animate = time => {
           lenis.raf(time);
           animationFrame = requestAnimationFrame(animate);
@@ -65,7 +82,7 @@ export default function usePageMotion() {
       document.querySelectorAll('.reveal-section').forEach(section => {
         const observer = new IntersectionObserver(entries => {
           entries.forEach(entry => section.classList.toggle('is-visible', entry.isIntersecting));
-        }, { threshold: window.innerWidth <= 700 ? 0.05 : 0.2 });
+        }, { threshold: section.classList.contains('about') && window.innerWidth <= 700 ? 0.05 : 0.2 });
         observer.observe(section);
         observers.push(observer);
       });
@@ -80,6 +97,7 @@ export default function usePageMotion() {
       cancelAnimationFrame(animationFrame);
       cancelAnimationFrame(cardFrame);
       lenis?.destroy();
+      smoothScrollRef.current = null;
       observers.forEach(observer => observer.disconnect());
       document.body.classList.remove('js-motion');
       window.removeEventListener('scroll', scheduleUpdate);
@@ -88,4 +106,5 @@ export default function usePageMotion() {
       reducedMotion.removeEventListener('change', configureMotion);
     };
   }, []);
+  return smoothScrollRef;
 }

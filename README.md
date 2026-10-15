@@ -25,7 +25,7 @@ Abra http://localhost:4173. A pasta `dist/` é gerada pelo build; edite os arqui
 - `src/App.jsx`: composição da página.
 - `src/components/`: hero, áreas, cartões, escritório, contato, modal e rodapé.
 - `src/practiceAreas.js`: áreas de atuação e links de WhatsApp.
-- `src/hooks/useCursorReveal.js`: revelação acumulativa do título com o mouse, com alternativa estática em dispositivos de toque e movimento reduzido.
+- `src/hooks/useCursorReveal.js`: efeito de luz acompanhando o mouse e revelação completa antes do primeiro scroll, conforme `Advogado Premium.zip`; pausa de 720 ms e suporte a roda, toque e teclado. Movimento reduzido mantém o título estático.
 - `src/hooks/usePageMotion.js`: animações, Lenis e limpeza dos efeitos.
 - `src/styles.css`: estilos e responsividade.
 - `public/assets/`: imagens geradas com referência nos advogados reais.
