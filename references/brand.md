@@ -10,6 +10,8 @@ Paleta extraída da logo (sem manual de marca fornecido):
 - Azul-marinho: `#141f35`, amostra do fundo da imagem original.
 - Prata: `#d6d4d5`, amostra clara do monograma metálico.
 - Texto: `#eef0f4`, tom claro de apoio para leitura.
-- Superfície de cartões: `#1b2942`, variação do azul-marinho.
+- Superfície de cartões: `#111b2d`, variação do azul-marinho.
 
 O componente `Brand` aplica o monograma oficial e o nome do escritório na abertura e no rodapé.
+
+As superfícies usam também o azul profundo `#070c16`, derivado do azul-marinho, para manter o contraste fotográfico do modelo.

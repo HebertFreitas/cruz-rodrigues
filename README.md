@@ -28,7 +28,7 @@ Abra http://localhost:4173. A pasta `dist/` é gerada pelo build; edite os arqui
 - `src/hooks/useCursorReveal.js`: efeito de luz acompanhando o mouse e revelação completa antes do primeiro scroll, conforme `Advogado Premium.zip`; pausa de 720 ms e suporte a roda, toque e teclado. Movimento reduzido mantém o título estático.
 - `src/hooks/usePageMotion.js`: animações, Lenis e limpeza dos efeitos.
 - `src/styles.css`: estilos e responsividade.
-- `public/assets/`: imagens geradas com referência nos advogados reais.
+- `public/assets/`: imagens geradas com referência nos advogados reais; `hero-cutout.png` e `equipe-cutout.png` têm fundo transparente e são as versões em uso.
 - `references/`: referências e prompts das imagens.
 - `.openai/hosting.json`: configuração do site hospedado, com publicação privada.
 

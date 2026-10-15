@@ -1,0 +1,16 @@
+{
+  "tool": "Built-in image_gen",
+  "transparent_background": true,
+  "prompts": [
+    {
+      "name": "layoutHeroCutout",
+      "path": "hero-v2.png",
+      "prompt": "Use case: background-extraction. Edit this exact input image. Remove ONLY the entire dark wall/background around and between the TWO seated men and leather armchairs. Output a genuinely TRANSPARENT PNG alpha cutout of BOTH MEN WITH BOTH LEATHER CHAIRS as one group. Preserve the exact input faces, hair, glasses, skin tone, clothing, hands, crossed legs, watches, leather chairs, original perspective, original poses and relative positions PIXEL-FAITHFULLY. Do not regenerate, beautify, repaint or change any person. Keep chair feet or bottom crop as in source. Remove the negative space above their heads to transparent, and remove background visible between figures. No background shadow, no ground plane, no checkerboard baked into image, no navy or black backdrop, no text. Keep original wide composition and proportions."
+    },
+    {
+      "name": "layoutAboutCutout",
+      "path": "equipe-v2.png",
+      "prompt": "Use case: background-extraction. Edit this exact input image. Remove ONLY the entire dark studio wall/background around and between the TWO standing men. Output a genuinely TRANSPARENT PNG alpha cutout of BOTH MEN STANDING WITH ARMS CROSSED as one group. Preserve exact input faces, hair, glasses, skin tones, clothes, ties, arms, watches, proportions, poses and relative positions PIXEL-FAITHFULLY. Do not regenerate, beautify, repaint or change any person. Keep the existing bottom thigh crop. Transparent space around heads and arms and between men, clean natural hair edges. No background shadow, no floor, no gray/black/navy backdrop, no baked checkerboard, no text. Preserve the input portrait group's aspect and proportions."
+    }
+  ]
+}
