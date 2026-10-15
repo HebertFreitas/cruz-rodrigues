@@ -10,7 +10,7 @@ export default function Hero({ smoothScrollRef }) {
 
   return (
 <section ref={heroRef} className="hero" tabIndex="0" aria-labelledby="hero-title">
-<img className="hero-photo" src="/assets/hero.png" alt="Retrato dos dois advogados do escritório Cruz e Rodrigues, sentados em poltronas de couro" fetchPriority="high" />
+<img className="hero-photo" src="/assets/hero-v2.png" alt="Retrato dos dois advogados do escritório Cruz e Rodrigues, sentados em poltronas de couro" fetchPriority="high" />
 <div className="hero-shade"></div>
 <div className="signature" aria-hidden="true">Cruz e<br />Rodrigues</div>
 <Brand className="hero-brand" />
