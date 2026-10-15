@@ -1,9 +1,8 @@
 export const practiceAreas = [
   {
     "id": "criminal",
-    "image": "/assets/penal.jpg",
-    "imageFit": "contain",
-    "imageAlt": "Estátua da Justiça com balança, martelo e livro jurídico",
+    "image": "/assets/direito-criminal.webp",
+    "imageAlt": "Estátua da Justiça em bronze com balança e espada, livro jurídico e martelo sobre uma mesa de madeira",
     "title": "Direito Criminal",
     "description": "Defesa técnica e acompanhamento próximo para quem precisa de orientação na esfera criminal. Atenção aos detalhes e compromisso com os seus direitos em cada etapa.",
     "chips": [

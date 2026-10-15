@@ -3,7 +3,7 @@ export default function PracticeCard({ area, index, total }) {
     <article className="practice-card" id={area.id} role="listitem" style={{ '--order': index + 1 }}>
       <div className="card-surface">
         <div className="card-image">
-          <img src={area.image} alt={area.imageAlt} loading="lazy" style={{ objectFit: area.imageFit || 'cover' }} />
+          <img src={area.image} alt={area.imageAlt} loading="lazy" />
           <span className="card-number">{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
         </div>
         <div className="card-body">
