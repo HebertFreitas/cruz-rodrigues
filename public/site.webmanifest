@@ -1,0 +1,10 @@
+{
+  "name": "Cruz e Rodrigues | Advocacia Especializada",
+  "short_name": "Cruz e Rodrigues",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#141f35",
+  "theme_color": "#141f35",
+  "icons": [{ "src": "/brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}

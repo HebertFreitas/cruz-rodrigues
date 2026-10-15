@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import Brand from './Brand';
 import useCursorReveal from '../hooks/useCursorReveal';
 
 export default function Hero({ smoothScrollRef }) {
@@ -12,6 +13,7 @@ export default function Hero({ smoothScrollRef }) {
 <img className="hero-photo" src="/assets/hero.png" alt="Retrato dos dois advogados do escritório Cruz e Rodrigues, sentados em poltronas de couro" fetchPriority="high" />
 <div className="hero-shade"></div>
 <div className="signature" aria-hidden="true">Cruz e<br />Rodrigues</div>
+<Brand className="hero-brand" />
 <p className="hero-eyebrow">Advocacia com estratégia e compromisso</p>
 <h1 ref={titleRef} className="hero-title" id="hero-title">Seu direito merece<br /><span>uma defesa à altura.</span></h1>
 <div ref={scrollTitleRef} className="hero-title hero-title-scroll" aria-hidden="true">Seu direito merece<br /><span>uma defesa à altura.</span></div>
