@@ -8,3 +8,21 @@
 /* Enquadramento das duas pessoas sem recortar os rostos. */
 .hero-photo{inset:auto 0 0;height:85%}.hero{background:#161616}
 @media(max-width:700px){.hero-photo{width:150%;max-width:none;height:auto;left:-25%;bottom:12%;object-fit:contain}.hero:after{height:30%}.hero h1{top:16%}.hero-eyebrow{top:9%}.hero-shade{background:linear-gradient(180deg,#161616,transparent 40%,transparent 70%,#0008)}}
+
+/* Desktop: the cursor paints a soft, persistent reveal across the title. */
+.hero h1{padding-bottom:.16em}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .hero h1.is-reveal-ready{
+    -webkit-mask-image:var(--title-reveal-mask);
+    mask-image:var(--title-reveal-mask);
+    -webkit-mask-size:100% 100%;
+    mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat;
+    mask-repeat:no-repeat;
+    mask-mode:alpha;
+  }
+  .hero:focus-visible h1.is-reveal-ready{
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
+}
