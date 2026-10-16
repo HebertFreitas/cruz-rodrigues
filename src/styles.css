@@ -160,8 +160,9 @@ dialog > p:not(.eyebrow) { margin: 22px 0; color: var(--muted); font-size: .75re
   .hero-brand .brand-wordmark { display: block; font-size: 1.3rem; }
   .hero-brand .brand-wordmark small { font-size: .38rem; }
   .hero-eyebrow { position: relative; grid-area: eyebrow; top: auto; left: auto; width: 100%; max-width: 100%; margin: 28px 0 22px; transform: none; font-size: .53rem; line-height: 1.8; letter-spacing: .18em; }
-  .signature { top: 20%; width: calc(100% - 32px); font-size: clamp(2.5rem,14vw,6.125rem); line-height: .8; text-align: center; color: rgba(214,212,213,.055); }
-  .hero .hero-title { position: relative; grid-area: title; align-self: start; top: auto; left: auto; width: 100%; padding-bottom: .16em; transform: none; font-size: clamp(2.35rem,10.3vw,4.5rem); line-height: .94; }
+  .hero .signature { position: relative; grid-area: title; top: auto; left: auto; z-index: 1; width: 100%; margin: 10px 0 8px; transform: none; font-size: clamp(3.6rem,18vw,7rem); line-height: .85; text-align: center; color: rgba(201,166,107,.28); }
+  .hero .hero-title:not(.hero-title-scroll) { position: absolute; grid-area: auto; top: 0; left: 0; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; transform: none; }
+  .hero .hero-title-scroll { display: none; }
   .hero-title span { white-space: normal; }
   .hero-portrait { position: relative; grid-area: portrait; justify-self: center; width: min(138%,760px); max-width: none; height: auto; margin-top: 24px; bottom: auto; left: auto; transform: none; }
   .hero::after { height: 130px; }
