@@ -38,8 +38,7 @@ export default function Contact({ onOpenContact }) {
           <address>
             <div><span className="detail-label">Criminal · Marlon Henrique</span><a href="tel:+5531975844780">(31) 97584-4780</a></div>
             <div><span className="detail-label">Cível · Marlon Cruz</span><a href="tel:+5531982151333">(31) 98215-1333</a></div>
-            <div className="office-address"><span className="detail-label">Nosso escritório</span><a href={mapUrl} target="_blank" rel="noopener noreferrer">Av. Barão Homem de Melo, 4494<br />Nova Granada · Belo Horizonte — MG <span aria-hidden="true">↗</span></a></div>
-            <div><span className="detail-label">Acompanhe</span><a href="https://www.instagram.com/cruzerodrigues/" target="_blank" rel="noopener noreferrer">@cruzerodrigues <span aria-hidden="true">↗</span></a></div>
+            <div><span className="detail-label instagram-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>Acompanhe</span><a href="https://www.instagram.com/cruzerodrigues/" target="_blank" rel="noopener noreferrer">@cruzerodrigues <span aria-hidden="true">↗</span></a></div>
           </address>
           <button className="button" type="button" onClick={onOpenContact}>Falar com um advogado <span aria-hidden="true">↗</span></button>
         </div>
