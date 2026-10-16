@@ -33,3 +33,12 @@ Abra http://localhost:4173. A pasta `dist/` é gerada pelo build; edite os arqui
 - `.openai/hosting.json`: configuração do site hospedado, com publicação privada.
 
 As fontes do Google e a imagem de Direito Cível do Cloudinary precisam de conexão à internet. A foto do escritório e a imagem de Direito Criminal ficam em `public/assets/`.
+
+## Mapa com tema noturno nativo
+
+O componente `OfficeMap` usa `google.maps.ColorScheme.DARK`, sem filtros CSS.
+Copie `.env.example` para `.env.local`, configure `VITE_GOOGLE_MAPS_API_KEY` com uma chave de navegador do Google Maps Platform e reinicie o Vite. Habilite **Maps JavaScript API** e **Geocoding API** no projeto Google Cloud e restrinja a chave aos domínios usados pelo site. É possível configurar seu próprio map ID em `VITE_GOOGLE_MAPS_MAP_ID`; sem ele, é usado `DEMO_MAP_ID`.
+
+A geocodificação posiciona o mapa e o pin no endereço configurado. Sem chave ou em caso de erro de carregamento/geocodificação, o mapa incorporado padrão mantém o endereço e as interações disponíveis; esse iframe não oferece a opção de tema noturno da API JavaScript.
+
+Documentação: https://developers.google.com/maps/documentation/javascript/mapcolorscheme
